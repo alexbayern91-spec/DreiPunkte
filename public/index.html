@@ -1,660 +1,1008 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" prefix="og: http://ogp.me/ns#">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DreiPunkte — Fußball. Daten. Klarheit.</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080808">
+<title>DreiPunkte — Bundesliga KI Analyse & Spielvorschau heute</title>
+<meta name="description" content="Die beste KI-Fußball-Analyse für Bundesliga, Europa League und Champions League. Spielvorschau, Statistiken, Taktik — kostenlos starten.">
+<meta name="keywords" content="Bundesliga Analyse, Fußball KI Analyse, Spielvorschau heute, Europa League Finale, SC Freiburg, KI Fußball Deutschland, Spielanalyse Bundesliga">
+<meta name="robots" content="index, follow">
+<meta name="language" content="de">
+<meta name="geo.region" content="DE">
+<link rel="canonical" href="https://dreipunkte.app/">
+<meta property="og:title" content="DreiPunkte — KI Fußball Analyse · Bundesliga & Europa League">
+<meta property="og:description" content="Professionelle KI-Spielvorschau. Heute: SC Freiburg vs Aston Villa — Europa League Finale.">
+<meta property="og:locale" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"DreiPunkte","description":"KI-Fußball-Analyse für Bundesliga und europäische Top-Ligen","applicationCategory":"SportsApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"inLanguage":"de"}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#080808;--surface:#0d0d0d;--card:#111;
-  --green:#00e676;--green-night:#0a150c;--green-border:rgba(0,230,118,0.2);
-  --white:#f0ede6;--muted:rgba(240,237,230,0.4);--faint:rgba(240,237,230,0.12);
-  --border:rgba(240,237,230,0.07);--red:#DC052D;--yellow:#e8cd00;
+  --bg:#080808;--s:#0f0f0f;--c:#141414;--c2:#1c1c1c;
+  --g:#00e676;--gn:#071209;--gb:rgba(0,230,118,0.2);
+  --w:#f0ede6;--m:rgba(240,237,230,0.45);--f:rgba(240,237,230,0.15);
+  --b:rgba(240,237,230,0.07);--b2:rgba(240,237,230,0.04);
+  --red:#e03050;--yellow:#f0c040;
 }
-html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Syne',sans-serif;overflow-x:hidden}
+html{height:100%;overflow-x:hidden}
+body{background:var(--bg);color:var(--w);font-family:'Syne',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
 
 /* NAV */
-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:0.5px solid var(--border);background:rgba(8,8,8,0.95);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100}
-.nav-brand{display:flex;align-items:center;gap:8px}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(8,8,8,0.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:0.5px solid var(--b);position:sticky;top:0;z-index:200}
+.brand{display:flex;align-items:center;gap:8px;cursor:pointer}
 .dots{display:flex;gap:3px}
-.dot-g{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
-.dot-w{width:7px;height:7px;border-radius:50%;background:var(--white);opacity:.7}
-.dot-d{width:7px;height:7px;border-radius:50%;background:var(--white);opacity:.15}
-@keyframes pulse{0%,100%{box-shadow:0 0 8px var(--green)}50%{box-shadow:0 0 16px var(--green),0 0 32px rgba(0,230,118,0.3)}}
-.wordmark{font-size:16px;font-weight:700;letter-spacing:-.5px}
-.wordmark span{color:var(--green)}
-.nav-right{display:flex;align-items:center;gap:12px}
-.date-pill{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
-.pro-btn{background:var(--green-night);border:0.5px solid var(--green-border);border-radius:99px;padding:6px 14px;font-size:11px;color:var(--green);font-weight:500;cursor:pointer;font-family:'Syne',sans-serif;transition:all .2s}
-.pro-btn:hover{background:rgba(0,230,118,0.15)}
+.dg{width:8px;height:8px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);animation:glow 2s infinite}
+.dw{width:8px;height:8px;border-radius:50%;background:var(--w);opacity:.65}
+.dd{width:8px;height:8px;border-radius:50%;background:var(--w);opacity:.15}
+@keyframes glow{0%,100%{box-shadow:0 0 8px var(--g)}50%{box-shadow:0 0 20px var(--g),0 0 40px rgba(0,230,118,0.3)}}
+.wm{font-size:17px;font-weight:800;letter-spacing:-0.5px}
+.wm em{color:var(--g);font-style:normal}
+.counter{background:var(--gn);border:0.5px solid var(--gb);border-radius:99px;padding:5px 13px;font-size:11px;font-weight:700;color:var(--g);font-family:'DM Mono',monospace;cursor:pointer;transition:all .2s}
 
 /* VIEWS */
-#matchesView,#analysisView{width:100%;max-width:900px;margin:0 auto}
-#analysisView{display:none}
+.view{display:none;min-height:calc(100vh - 57px)}
+.view.active{display:block}
 
 /* HERO */
-.hero{padding:28px 24px 0;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.hero-title{font-size:26px;font-weight:800;letter-spacing:-1px;line-height:1.1}
-.hero-title span{color:var(--green);text-shadow:0 0 20px rgba(0,230,118,.3)}
-.hero-sub{font-size:12px;color:var(--muted);margin-top:4px}
-.live-badge{display:flex;align-items:center;gap:5px;background:var(--green-night);border:0.5px solid var(--green-border);border-radius:99px;padding:5px 12px}
-.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 1.2s infinite}
+.hero-wrap{padding:16px 16px 0}
+.hero-label{font-size:10px;color:var(--m);font-family:'DM Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.hero-label-dot{width:5px;height:5px;border-radius:50%;background:var(--g);box-shadow:0 0 6px var(--g);animation:glow 1.5s infinite}
+
+.hero-card{border-radius:22px;overflow:hidden;position:relative;cursor:pointer;background:var(--c);border:0.5px solid rgba(240,237,230,0.08);transition:transform .15s}
+.hero-card:active{transform:scale(0.98)}
+
+.hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,230,118,0.05) 0%,transparent 50%,rgba(0,0,0,0.5) 100%);pointer-events:none;z-index:1}
+.hero-glow-orb{position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:360px;height:240px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,230,118,0.07) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+.hero-inner{position:relative;z-index:2;padding:20px 18px 18px}
+.hero-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.hero-comp{display:flex;align-items:center;gap:7px}
+.hero-comp-badge{background:rgba(255,165,0,0.12);border:0.5px solid rgba(255,165,0,0.25);border-radius:99px;padding:3px 10px;font-size:10px;color:#ffb347;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:.5px}
+.hero-comp-name{font-size:11px;color:var(--m);font-family:'DM Mono',monospace}
+.hero-kickoff{text-align:right}
+.hero-time-val{font-size:14px;font-weight:700;color:var(--g);font-family:'DM Mono',monospace}
+.hero-time-sub{font-size:10px;color:var(--m);margin-top:2px;font-family:'DM Mono',monospace}
+.hero-live-badge{display:flex;align-items:center;gap:4px;background:rgba(220,48,80,0.15);border:0.5px solid rgba(220,48,80,0.3);border-radius:99px;padding:4px 10px;justify-content:flex-end}
+.hld{width:5px;height:5px;border-radius:50%;background:var(--red);animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-.live-txt{font-size:11px;color:var(--green);font-family:'DM Mono',monospace}
+.hlt{font-size:9px;color:var(--red);font-weight:700;font-family:'DM Mono',monospace}
+
+.hero-teams-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hero-team-side{flex:1;display:flex;flex-direction:column;align-items:center;gap:10px}
+.hero-crest{width:68px;height:68px;border-radius:18px;background:#1c1c1c;border:0.5px solid rgba(240,237,230,0.1);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;overflow:hidden;flex-shrink:0}
+.hero-crest img{width:100%;height:100%;object-fit:contain}
+.hero-tname{font-size:14px;font-weight:800;text-align:center;letter-spacing:-0.4px;line-height:1.2}
+.hero-trank{font-size:11px;color:var(--m);font-family:'DM Mono',monospace;margin-top:2px}
+.hero-form-dots{display:flex;gap:3px;margin-top:2px}
+.hfd{width:7px;height:7px;border-radius:50%}
+
+.hero-mid{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 10px}
+.hero-score-val{font-size:34px;font-weight:800;letter-spacing:-2px;color:var(--w);line-height:1}
+.hero-vs-txt{font-size:13px;color:rgba(240,237,230,0.18);letter-spacing:3px}
+.hero-round-txt{font-size:10px;color:var(--m);font-family:'DM Mono',monospace;text-align:center}
+
+.hero-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.hpill{background:rgba(240,237,230,0.04);border:0.5px solid rgba(240,237,230,0.08);border-radius:99px;padding:4px 10px;font-size:10px;color:var(--m);font-family:'DM Mono',monospace}
+.hpill.hot{background:rgba(255,165,0,0.06);border-color:rgba(255,165,0,0.15);color:#ffb347}
+
+.hero-bottom-row{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:0.5px solid rgba(240,237,230,0.06)}
+.hero-venue-txt{font-size:11px;color:rgba(240,237,230,0.28)}
+.hero-analyse-btn{display:flex;align-items:center;gap:7px;background:var(--g);color:#051a0b;font-size:12px;font-weight:800;padding:9px 18px;border-radius:99px;letter-spacing:-0.2px}
+
+/* SECTION */
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:20px 16px 10px}
+.sec-title{font-size:17px;font-weight:800;letter-spacing:-0.5px}
+.sec-title span{color:var(--g)}
+.sec-count{font-size:11px;color:var(--m);font-family:'DM Mono',monospace}
 
 /* FILTERS */
-.filters{display:flex;gap:8px;padding:16px 24px 0;overflow-x:auto;scrollbar-width:none}
-.filters::-webkit-scrollbar{display:none}
-.filter-btn{padding:6px 14px;border-radius:99px;border:0.5px solid var(--border);font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;background:transparent;white-space:nowrap;font-family:'Syne',sans-serif;transition:all .2s}
-.filter-btn.active,.filter-btn:hover{background:var(--green-night);border-color:var(--green-border);color:var(--green)}
+.lfilter{display:flex;gap:6px;padding:0 16px 10px;overflow-x:auto;scrollbar-width:none}
+.lfilter::-webkit-scrollbar{display:none}
+.lf{padding:5px 14px;border-radius:99px;border:0.5px solid var(--b);font-size:11px;font-weight:600;color:var(--m);cursor:pointer;background:transparent;white-space:nowrap;font-family:'Syne',sans-serif;transition:all .2s;flex-shrink:0}
+.lf.active{background:var(--gn);border-color:var(--gb);color:var(--g)}
 
-/* MATCHES */
-.matches-list{padding:16px 24px 40px;display:flex;flex-direction:column;gap:8px}
-.match-card{background:var(--card);border:0.5px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
-.match-card:hover{border-color:var(--green-border);background:#141414;transform:translateY(-1px)}
-.match-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--green);opacity:0;transition:opacity .3s}
-.match-card:hover::after{opacity:.3}
-.mc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.mc-league{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.5px}
-.mc-time-block{display:flex;align-items:center;gap:6px}
-.mc-time{font-size:12px;font-weight:500;color:var(--green);font-family:'DM Mono',monospace}
-.mc-live-pill{display:flex;align-items:center;gap:3px;background:var(--green-night);border:0.5px solid var(--green-border);border-radius:99px;padding:2px 8px}
-.mc-live-dot{width:4px;height:4px;border-radius:50%;background:var(--green);animation:blink 1s infinite}
-.mc-live-txt{font-size:9px;color:var(--green);font-family:'DM Mono',monospace}
-.mc-score-live{font-size:11px;color:var(--green);font-weight:700;font-family:'DM Mono',monospace}
+/* MATCH CARDS */
+.mlist{padding:0 16px 100px;display:flex;flex-direction:column;gap:8px}
+.mc{background:var(--c);border:0.5px solid var(--b);border-radius:16px;padding:14px 16px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.mc:active{transform:scale(0.98);background:var(--c2)}
+.mc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.mc-lg{font-size:10px;color:var(--m);font-family:'DM Mono',monospace;letter-spacing:.3px}
+.mc-t{font-size:12px;font-weight:700;color:var(--g);font-family:'DM Mono',monospace}
+.mc-live{display:flex;align-items:center;gap:3px;background:rgba(220,48,80,0.1);border:0.5px solid rgba(220,48,80,0.25);border-radius:99px;padding:2px 8px}
+.mc-ld{width:4px;height:4px;border-radius:50%;background:var(--red);animation:blink 1s infinite}
+.mc-lt{font-size:9px;color:var(--red);font-weight:700;font-family:'DM Mono',monospace}
+.mc-fin{font-size:10px;color:rgba(240,237,230,0.3);font-family:'DM Mono',monospace}
 .mc-teams{display:flex;align-items:center;gap:8px}
-.mc-team{flex:1;display:flex;align-items:center;gap:10px}
-.mc-team.away{flex-direction:row-reverse}
-.mc-crest{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;overflow:hidden}
-.mc-crest img{width:100%;height:100%;object-fit:contain}
-.mc-info{flex:1}
-.mc-info.away{text-align:right}
-.mc-name{font-size:13px;font-weight:500}
-.mc-form{display:flex;gap:2px;margin-top:3px}
-.mc-form.away{justify-content:flex-end}
+.mc-team{flex:1;display:flex;align-items:center;gap:9px}
+.mc-team.r{flex-direction:row-reverse}
+.mc-cr{width:36px;height:36px;border-radius:10px;background:var(--c2);border:0.5px solid rgba(240,237,230,0.06);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;overflow:hidden}
+.mc-cr img{width:100%;height:100%;object-fit:contain}
+.mc-ti{flex:1}
+.mc-ti.r{text-align:right}
+.mc-tn{font-size:13px;font-weight:600;letter-spacing:-0.2px}
+.mc-tf{display:flex;gap:2px;margin-top:3px}
+.mc-tf.r{justify-content:flex-end}
 .mfd{width:6px;height:6px;border-radius:50%}
-.mc-center{text-align:center;min-width:64px}
-.mc-score{font-size:22px;font-weight:800;letter-spacing:-1px}
-.mc-vs{font-size:11px;color:var(--muted);letter-spacing:2px}
-.mc-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:0.5px solid rgba(240,237,230,0.05)}
-.mc-odds{display:flex;gap:6px}
-.mc-odd{background:rgba(240,237,230,0.03);border:0.5px solid var(--border);border-radius:7px;padding:4px 10px;text-align:center}
-.mc-odd-label{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace}
-.mc-odd-val{font-size:12px;font-weight:500}
-.mc-odd-val.best{color:var(--green)}
-.mc-cta{display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(0,230,118,.7);font-weight:500}
+.mc-ctr{text-align:center;min-width:54px}
+.mc-sc{font-size:20px;font-weight:800;letter-spacing:-1px}
+.mc-vs{font-size:11px;color:rgba(240,237,230,0.18);letter-spacing:2px}
+.mc-bot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:9px;border-top:0.5px solid var(--b2)}
+.mc-vn{font-size:10px;color:rgba(240,237,230,0.2)}
+.mc-cta{font-size:11px;color:rgba(0,230,118,0.65);font-weight:700}
 
-/* LOADING */
-.loader{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;gap:16px}
-.spinner{width:32px;height:32px;border:2px solid rgba(0,230,118,.15);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite}
+/* LOADER */
+.loader{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:14px}
+.spin{width:26px;height:26px;border:2px solid rgba(0,230,118,.08);border-top-color:var(--g);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loader-text{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)}
-.empty{text-align:center;padding:60px 24px;color:var(--muted);font-size:14px}
+.loader-t{font-family:'DM Mono',monospace;font-size:11px;color:var(--m)}
+.empty{text-align:center;padding:50px 20px;color:var(--m);font-size:14px;line-height:1.7}
 
 /* ANALYSIS */
-.analysis-header{padding:16px 24px;border-bottom:0.5px solid var(--border)}
-.back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:16px;transition:color .2s}
-.back-btn:hover{color:var(--white)}
-.match-banner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.banner-teams{display:flex;align-items:center;gap:20px}
-.banner-team{text-align:center}
-.banner-crest{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;margin:0 auto 6px;overflow:hidden}
-.banner-crest img{width:100%;height:100%;object-fit:contain}
-.banner-name{font-size:16px;font-weight:700;letter-spacing:-.5px}
-.banner-vs{font-size:14px;color:var(--muted);letter-spacing:3px}
-.banner-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.meta-pill{background:var(--green-night);border:0.5px solid var(--green-border);border-radius:99px;padding:4px 10px;font-size:10px;color:rgba(0,230,118,.7);font-family:'DM Mono',monospace}
+.av-sticky{position:sticky;top:57px;z-index:100;background:rgba(8,8,8,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:0.5px solid var(--b)}
+.av-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
+.back-btn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--m);cursor:pointer;padding:6px 0}
+.av-mini{font-size:13px;font-weight:700;letter-spacing:-0.3px}
+.av-share{font-size:20px;color:var(--m);cursor:pointer;padding:4px}
 
-/* AI BLOCK */
-.ai-block{padding:20px 24px;border-bottom:0.5px solid var(--border)}
-.ai-header{display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.ai-icon{width:30px;height:30px;border-radius:9px;background:var(--green-night);border:0.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;font-size:15px}
-.ai-title{font-size:10px;font-weight:500;color:var(--green);letter-spacing:1.5px;text-transform:uppercase;font-family:'DM Mono',monospace}
-.ai-loading{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
-.ai-spinner{width:14px;height:14px;border:1.5px solid rgba(0,230,118,.15);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite}
-.ai-content{display:none}
-.ai-text{font-size:14px;color:rgba(240,237,230,.7);line-height:1.8}
-.ai-text strong{color:var(--white);font-weight:500}
-.ai-text .hl{color:var(--green);font-weight:500}
-.prono-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px}
-.prono-card{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:14px;text-align:center;transition:all .3s}
-.prono-card.winner{border-color:var(--green-border);background:var(--green-night)}
-.prono-lbl{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:6px}
-.prono-pct{font-size:26px;font-weight:800;letter-spacing:-1px}
-.prono-name{font-size:11px;color:var(--muted);margin-top:3px}
+.av-banner{background:linear-gradient(180deg,#141414 0%,var(--bg) 100%);padding:18px 16px 14px;border-bottom:0.5px solid var(--b)}
+.av-teams{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.avt{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px}
+.avc{width:56px;height:56px;border-radius:14px;background:var(--c2);border:0.5px solid rgba(240,237,230,0.1);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;overflow:hidden}
+.avc img{width:100%;height:100%;object-fit:contain}
+.avn{font-size:14px;font-weight:700;text-align:center;letter-spacing:-0.3px}
+.av-mid{display:flex;flex-direction:column;align-items:center;gap:4px}
+.av-sc{font-size:30px;font-weight:800;letter-spacing:-2px}
+.av-vs{font-size:12px;color:rgba(240,237,230,0.18);letter-spacing:3px}
+.av-meta{display:flex;flex-wrap:wrap;gap:5px}
+.mp{background:var(--gn);border:0.5px solid var(--gb);border-radius:99px;padding:4px 10px;font-size:10px;color:rgba(0,230,118,0.7);font-family:'DM Mono',monospace;font-weight:500}
 
-/* SECTIONS */
-.sections{padding:16px 24px 40px;display:flex;flex-direction:column;gap:8px;display:none}
-.sec-card{background:var(--card);border:0.5px solid var(--border);border-radius:14px;overflow:hidden}
-.sec-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;transition:background .2s}
-.sec-head:hover{background:rgba(240,237,230,.02)}
-.sec-head-left{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:500;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
-.sec-head-left svg{width:14px;height:14px;color:var(--green)}
-.sec-chevron{font-size:14px;color:var(--muted);transition:transform .2s}
-.sec-chevron.open{transform:rotate(180deg)}
-.sec-body{display:none;padding:0 16px 14px}
-.sec-body.open{display:block}
+.dtabs{display:flex;overflow-x:auto;scrollbar-width:none;padding:0 16px}
+.dtabs::-webkit-scrollbar{display:none}
+.dtab{padding:12px 14px;font-size:11px;font-weight:700;color:var(--m);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;font-family:'Syne',sans-serif;flex-shrink:0}
+.dtab.active{color:var(--g);border-bottom-color:var(--g)}
 
-.form-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.form-tag{font-size:10px;font-weight:600;color:var(--muted);width:32px;flex-shrink:0}
-.form-dots{display:flex;gap:4px;flex:1}
+.dpanel{display:none;padding:14px 16px 100px}
+.dpanel.active{display:block}
+
+/* AI */
+.ai-block{background:linear-gradient(135deg,#071209 0%,rgba(7,18,9,0.5) 100%);border:0.5px solid var(--gb);border-radius:18px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden}
+.ai-orb{position:absolute;top:-50px;right:-50px;width:150px;height:150px;border-radius:50%;background:var(--g);opacity:0.03;pointer-events:none}
+.ai-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ai-ic{width:32px;height:32px;border-radius:10px;background:rgba(0,230,118,0.1);border:0.5px solid var(--gb);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ai-tl{font-size:10px;font-weight:700;color:var(--g);letter-spacing:1.5px;text-transform:uppercase;font-family:'DM Mono',monospace}
+.ai-bdg{margin-left:auto;font-size:9px;color:rgba(0,230,118,0.4);font-family:'DM Mono',monospace;border:0.5px solid rgba(0,230,118,0.12);border-radius:99px;padding:2px 8px}
+.ai-ld{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--m);padding:4px 0}
+.ai-sp{width:14px;height:14px;border:1.5px solid rgba(0,230,118,.08);border-top-color:var(--g);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+.ai-dots{display:flex;gap:4px;align-items:center}
+.ai-dot{width:5px;height:5px;border-radius:50%;background:var(--g);animation:bounce .8s infinite}
+.ai-dot:nth-child(2){animation-delay:.15s}
+.ai-dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
+.ai-txt{display:none;font-size:14px;color:rgba(240,237,230,0.75);line-height:1.85}
+.ai-txt strong{color:var(--w);font-weight:600}
+.ai-txt .hl{color:var(--g);font-weight:600}
+
+.prono{display:none;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px}
+.pc{background:rgba(8,8,8,0.6);border:0.5px solid rgba(240,237,230,0.06);border-radius:14px;padding:14px 8px;text-align:center}
+.pc.w{border-color:var(--gb);background:rgba(0,230,118,0.06)}
+.pl{font-size:9px;color:var(--m);font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:6px}
+.pp{font-size:26px;font-weight:800;letter-spacing:-1px;line-height:1}
+.pn{font-size:10px;color:var(--m);margin-top:4px}
+
+/* CARDS */
+.card{background:var(--c);border:0.5px solid var(--b);border-radius:16px;overflow:hidden;margin-bottom:10px}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;cursor:pointer}
+.ch:active{background:var(--c2)}
+.chl{font-size:11px;font-weight:700;color:var(--m);letter-spacing:1px;text-transform:uppercase}
+.chev{font-size:13px;color:rgba(240,237,230,0.2);transition:transform .2s}
+.chev.open{transform:rotate(180deg)}
+.cb{display:none;padding:0 15px 14px}
+.cb.open{display:block}
+
+/* FORM */
+.fr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ft{font-size:10px;font-weight:700;color:var(--m);width:30px;flex-shrink:0;font-family:'DM Mono',monospace}
+.fds{display:flex;gap:3px;flex:1}
 .fd{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
-.fd-w{background:rgba(0,230,118,.1);color:var(--green)}
-.fd-d{background:rgba(240,237,230,.06);color:rgba(240,237,230,.4)}
-.fd-l{background:rgba(220,5,45,.1);color:#f87171}
-.form-pts{font-size:11px;font-weight:500;color:var(--muted);text-align:right;min-width:52px}
+.fw{background:rgba(0,230,118,.12);color:var(--g)}
+.fd2{background:rgba(240,237,230,.05);color:rgba(240,237,230,.35)}
+.fl{background:rgba(220,48,80,.12);color:#f08090}
+.fps{font-size:11px;font-weight:600;color:var(--m);text-align:right;min-width:48px;font-family:'DM Mono',monospace}
 
-.stat-row{margin-bottom:10px}
-.stat-vals{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.sv{font-size:13px;font-weight:500}
-.sn{font-size:10px;color:var(--muted);text-align:center;flex:1}
-.track{height:2px;background:rgba(240,237,230,.05);border-radius:2px;display:flex;overflow:hidden}
-.tl{height:2px;background:var(--red);opacity:.8}
-.tr{height:2px;background:var(--yellow);flex:1;opacity:.6}
+.rm{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--b2)}
+.rm:last-child{border-bottom:none}
+.rm-d{font-size:10px;color:var(--m);width:38px;font-family:'DM Mono',monospace}
+.rm-t{font-size:12px;font-weight:600;flex:1;text-align:center;opacity:.85}
+.rm-r{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
 
-.h2h-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid rgba(240,237,230,.04)}
-.h2h-row:last-child{border-bottom:none}
-.h2h-date{font-size:10px;color:var(--muted);width:44px;font-family:'DM Mono',monospace}
-.h2h-score{font-size:12px;font-weight:500;flex:1;text-align:center;opacity:.8}
-.h2h-comp{font-size:10px;color:var(--muted);text-align:right;width:24px}
+/* STATS */
+.sr{margin-bottom:12px}
+.sv{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.svl{font-size:14px;font-weight:700}
+.svn{font-size:10px;color:var(--m);text-align:center;flex:1;font-family:'DM Mono',monospace}
+.trk{height:3px;background:rgba(240,237,230,.04);border-radius:2px;display:flex;overflow:hidden}
+.tl{height:3px;background:var(--red);opacity:.8}
+.tr{height:3px;background:var(--yellow);flex:1;opacity:.7}
 
-.inj-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid rgba(240,237,230,.04)}
-.inj-row:last-child{border-bottom:none}
-.inj-av{width:30px;height:30px;border-radius:8px;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:var(--muted);flex-shrink:0}
-.inj-name{font-size:12px;font-weight:500;flex:1;opacity:.85}
-.inj-reason{font-size:10px;color:var(--muted);margin-top:1px}
-.inj-badge{font-size:9px;padding:3px 8px;border-radius:99px;font-weight:500}
-.inj-r{background:rgba(220,5,45,.1);color:#f87171}
-.inj-a{background:rgba(251,191,36,.08);color:#fbbf24}
+/* H2H */
+.h2h-sum{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.h2h-c{background:var(--s);border:0.5px solid var(--b);border-radius:12px;padding:12px 8px;text-align:center}
+.h2h-n{font-size:24px;font-weight:800;letter-spacing:-1px;line-height:1}
+.h2h-l{font-size:9px;color:var(--m);margin-top:3px;font-family:'DM Mono',monospace}
+.h2h-r{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--b2)}
+.h2h-r:last-child{border-bottom:none}
+.hd{font-size:10px;color:var(--m);width:38px;font-family:'DM Mono',monospace}
+.hs{font-size:12px;font-weight:600;flex:1;text-align:center;opacity:.85}
+.hc{font-size:10px;color:var(--m);text-align:right;width:20px}
 
-.sep{height:0.5px;background:rgba(240,237,230,.05);margin:10px 0}
-.sec-sub{font-size:10px;color:var(--muted);margin-bottom:10px;font-weight:500;letter-spacing:.5px}
+/* TABLE */
+.st-h{display:grid;grid-template-columns:22px 1fr 26px 26px 26px 34px;gap:4px;padding:5px 4px;border-bottom:0.5px solid var(--b);margin-bottom:4px}
+.st-h span{font-size:9px;color:var(--m);font-family:'DM Mono',monospace;text-align:center}
+.st-h span:nth-child(2){text-align:left}
+.st-r{display:grid;grid-template-columns:22px 1fr 26px 26px 26px 34px;gap:4px;padding:7px 4px;border-bottom:0.5px solid rgba(240,237,230,0.03);align-items:center;border-radius:8px}
+.st-r.hl{background:rgba(0,230,118,0.05)}
+.st-p{font-size:11px;color:var(--m);text-align:center;font-family:'DM Mono',monospace}
+.st-tm{display:flex;align-items:center;gap:6px;min-width:0}
+.st-cr{width:18px;height:18px;border-radius:4px;overflow:hidden;background:var(--c2);display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:700;flex-shrink:0}
+.st-cr img{width:100%;height:100%;object-fit:contain}
+.st-nm{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st-v{font-size:11px;text-align:center;color:var(--m)}
+.st-pt{font-size:12px;font-weight:800;text-align:center}
+
+/* PLAYERS */
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pcard{background:var(--s);border:0.5px solid var(--b);border-radius:12px;padding:12px}
+.pc-h{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.pc-av{width:34px;height:34px;border-radius:9px;background:var(--c2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--m);flex-shrink:0;overflow:hidden}
+.pc-av img{width:100%;height:100%;object-fit:cover;border-radius:9px}
+.pc-nm{font-size:12px;font-weight:700;line-height:1.3}
+.pc-ps{font-size:10px;color:var(--m);margin-top:1px}
+.pc-stats{display:flex;gap:5px}
+.pc-st{flex:1;text-align:center;background:rgba(0,230,118,0.05);border-radius:6px;padding:5px 3px}
+.pc-vl{font-size:13px;font-weight:800;color:var(--g)}
+.pc-lb{font-size:8px;color:var(--m);font-family:'DM Mono',monospace}
+
+/* LINEUP */
+.lg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lt-title{font-size:10px;font-weight:700;color:var(--g);letter-spacing:1px;text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:8px}
+.lp{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:0.5px solid var(--b2)}
+.lp:last-child{border-bottom:none}
+.lp-n{font-size:10px;color:var(--m);width:18px;font-family:'DM Mono',monospace;flex-shrink:0}
+.lp-nm{font-size:12px;font-weight:600;flex:1;letter-spacing:-0.2px}
+.lp-p{font-size:9px;color:var(--m)}
+
+/* INFO BOX */
+.ibox{background:rgba(0,230,118,0.04);border:0.5px solid rgba(0,230,118,0.1);border-radius:12px;padding:12px 14px;margin-top:10px}
+.ibox-t{font-size:11px;color:var(--g);font-weight:700;margin-bottom:4px}
+.ibox-b{font-size:12px;color:rgba(240,237,230,0.4);line-height:1.6}
+
+/* PAYWALL SHEET */
+.pw-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:999;display:flex;align-items:flex-end;backdrop-filter:blur(10px);animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.pw-sheet{background:#0f0f0f;border-radius:24px 24px 0 0;padding:28px 20px max(40px,env(safe-area-inset-bottom));width:100%;border-top:0.5px solid rgba(0,230,118,0.2);position:relative;overflow:hidden;animation:slideUp .3s cubic-bezier(0.23,1,0.32,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.pw-handle{width:40px;height:4px;background:rgba(240,237,230,0.12);border-radius:2px;margin:0 auto 24px}
+.pw-orb{position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:200px;height:200px;background:var(--g);opacity:0.04;border-radius:50%;pointer-events:none}
+.pw-icon{font-size:36px;text-align:center;margin-bottom:12px}
+.pw-title{font-size:23px;font-weight:800;text-align:center;letter-spacing:-0.5px;margin-bottom:8px;line-height:1.2}
+.pw-sub{font-size:13px;color:var(--m);text-align:center;line-height:1.7;margin-bottom:22px;padding:0 10px}
+.pw-features{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.pw-feat{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500}
+.pw-cta{display:block;width:100%;background:var(--g);color:#051a0b;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;padding:18px;border-radius:14px;border:none;cursor:pointer;letter-spacing:-0.3px;margin-bottom:12px}
+.pw-skip{text-align:center;font-size:12px;color:rgba(240,237,230,0.25);cursor:pointer;padding:4px}
 </style>
 </head>
 <body>
 
+<h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">DreiPunkte — KI Fußball Analyse Bundesliga & Europa League heute</h1>
+
 <nav>
-  <div class="nav-brand">
-    <div class="dots"><div class="dot-g"></div><div class="dot-w"></div><div class="dot-d"></div></div>
-    <div class="wordmark">Drei<span>Punkte</span></div>
+  <div class="brand" onclick="goHome()">
+    <div class="dots"><div class="dg"></div><div class="dw"></div><div class="dd"></div></div>
+    <div class="wm">Drei<em>Punkte</em></div>
   </div>
-  <div class="nav-right">
-    <div class="date-pill" id="navDate"></div>
-    <div class="pro-btn">3 analyses gratuites</div>
-  </div>
+  <div class="counter" id="counter" onclick="openPaywall()">3 gratis Analysen</div>
 </nav>
 
-<div id="matchesView">
-  <div class="hero">
-    <div>
-      <div class="hero-title">Matchs du <span id="heroDay">soir</span></div>
-      <div class="hero-sub" id="heroSub">Chargement en cours...</div>
+<!-- HOME -->
+<main class="view active" id="vHome">
+  <div id="heroWrap">
+    <div class="loader"><div class="spin"></div><div class="loader-t">Spiele werden geladen...</div></div>
+  </div>
+  <div id="listWrap" style="display:none">
+    <div class="sec-head">
+      <div class="sec-title">Alle <span>Spiele</span></div>
+      <div class="sec-count" id="secCount"></div>
     </div>
-    <div class="live-badge"><div class="live-dot"></div><div class="live-txt">LIVE DATA</div></div>
+    <div class="lfilter" id="lfilter">
+      <button class="lf active" onclick="filterLeague(this,'all')">Alle</button>
+    </div>
+    <div class="mlist" id="mlist"></div>
   </div>
+</main>
 
-  <div class="filters" id="leagueFilters">
-    <button class="filter-btn active" data-league="all">Tous</button>
-  </div>
-
-  <div class="matches-list" id="matchesList">
-    <div class="loader"><div class="spinner"></div><div class="loader-text">Chargement des matchs...</div></div>
-  </div>
-</div>
-
-<div id="analysisView">
-  <div class="analysis-header">
-    <div class="back-btn" onclick="showMatches()">← Retour aux matchs</div>
-    <div class="match-banner">
-      <div class="banner-teams" id="bannerTeams"></div>
-      <div class="banner-meta" id="bannerMeta"></div>
+<!-- ANALYSIS -->
+<div class="view" id="vAnalysis">
+  <div class="av-sticky">
+    <div class="av-nav">
+      <div class="back-btn" onclick="goHome()">← Spiele</div>
+      <div class="av-mini" id="avMini"></div>
+      <div class="av-share" onclick="shareMatch()">⬆</div>
+    </div>
+    <div class="av-banner">
+      <div class="av-teams" id="avTeams"></div>
+      <div class="av-meta" id="avMeta"></div>
+    </div>
+    <div class="dtabs">
+      <div class="dtab active" onclick="switchTab(this,'tKI')">🧠 KI-Analyse</div>
+      <div class="dtab" onclick="switchTab(this,'tForm')">🔥 Form</div>
+      <div class="dtab" onclick="switchTab(this,'tStats')">📊 Stats</div>
+      <div class="dtab" onclick="switchTab(this,'tH2H')">⚔️ H2H</div>
+      <div class="dtab" onclick="switchTab(this,'tTable')">🏆 Tabelle</div>
+      <div class="dtab" onclick="switchTab(this,'tPlayers')">👥 Spieler</div>
+      <div class="dtab" onclick="switchTab(this,'tLineup')">📋 Aufstellung</div>
     </div>
   </div>
 
-  <div class="ai-block">
-    <div class="ai-header">
-      <div class="ai-icon">🧠</div>
-      <div class="ai-title">Analyse IA DreiPunkte</div>
-    </div>
-    <div class="ai-loading" id="aiLoading"><div class="ai-spinner"></div> Analyse en cours...</div>
-    <div class="ai-content" id="aiContent">
-      <div class="ai-text" id="aiText"></div>
-      <div class="prono-grid" id="pronoGrid"></div>
-    </div>
-  </div>
-
-  <div class="sections" id="analysisSections">
-    <div class="sec-card">
-      <div class="sec-head" onclick="toggleSec(this)">
-        <div class="sec-head-left">🔥 Forme récente</div>
-        <div class="sec-chevron open">⌄</div>
+  <div class="dpanel active" id="tKI">
+    <div class="ai-block">
+      <div class="ai-orb"></div>
+      <div class="ai-hd">
+        <div class="ai-ic">🧠</div>
+        <div class="ai-tl">KI-Analyse</div>
+        <div class="ai-bdg" id="aiBdg">Vorspiel</div>
       </div>
-      <div class="sec-body open" id="formBody"></div>
-    </div>
-    <div class="sec-card">
-      <div class="sec-head" onclick="toggleSec(this)">
-        <div class="sec-head-left">📊 Statistiques clés</div>
-        <div class="sec-chevron">⌄</div>
+      <div class="ai-ld" id="aiLd">
+        <div class="ai-dots">
+          <div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div>
+        </div>
+        <span>Analyse wird generiert...</span>
       </div>
-      <div class="sec-body" id="statsBody"></div>
+      <div class="ai-txt" id="aiTxt"></div>
+      <div class="prono" id="prono"></div>
     </div>
-    <div class="sec-card">
-      <div class="sec-head" onclick="toggleSec(this)">
-        <div class="sec-head-left">⚔️ Head-to-Head</div>
-        <div class="sec-chevron">⌄</div>
-      </div>
-      <div class="sec-body" id="h2hBody"></div>
-    </div>
-    <div class="sec-card">
-      <div class="sec-head" onclick="toggleSec(this)">
-        <div class="sec-head-left">🚑 Absences & incertitudes</div>
-        <div class="sec-chevron">⌄</div>
-      </div>
-      <div class="sec-body" id="injuryBody"></div>
-    </div>
+    <div id="kiCta"></div>
   </div>
+  <div class="dpanel" id="tForm"><div id="cForm"><div class="loader"><div class="spin"></div></div></div></div>
+  <div class="dpanel" id="tStats"><div id="cStats"><div class="loader"><div class="spin"></div></div></div></div>
+  <div class="dpanel" id="tH2H"><div id="cH2H"><div class="loader"><div class="spin"></div></div></div></div>
+  <div class="dpanel" id="tTable"><div id="cTable"><div class="loader"><div class="spin"></div></div></div></div>
+  <div class="dpanel" id="tPlayers"><div id="cPlayers"><div class="loader"><div class="spin"></div></div></div></div>
+  <div class="dpanel" id="tLineup"><div id="cLineup"><div class="loader"><div class="spin"></div></div></div></div>
 </div>
 
 <script>
-const API_KEY = 'c7d96e5431mshb0302208f63e84bp18b48fjsn079b389c70a5';
-const API_HOST = 'footapi7.p.rapidapi.com';
-const BASE = 'https://' + API_HOST;
-const HEADERS = {'x-rapidapi-key': API_KEY, 'x-rapidapi-host': API_HOST};
+const FKEY = 'c7d96e5431mshb0302208f63e84bp18b48fjsn079b389c70a5';
+const FHOST = 'footapi7.p.rapidapi.com';
+const FBASE = 'https://' + FHOST;
+const FH = {'x-rapidapi-key': FKEY, 'x-rapidapi-host': FHOST};
 
-// Anthropic API for AI analysis
-const CLAUDE_API = 'https://api.anthropic.com/v1/messages';
+// Use Netlify proxy for AI (avoids CORS + hides key)
+const AI_PROXY = '/api/analyze';
 
-let allMatches = [];
-let currentMatch = null;
-let activeLeague = 'all';
+let allMatches = [], currentMatch = null, cache = {};
+let analysesUsed = parseInt(localStorage.getItem('dp_used') || '0');
+const MAX_FREE = 3;
 
-async function fetchAPI(path) {
-  const r = await fetch(BASE + path, {headers: HEADERS});
-  if (!r.ok) throw new Error(r.status);
-  return r.json();
+// ── API ────────────────────────────────────────────────────
+async function fapi(path) {
+  if (cache[path]) return cache[path];
+  try {
+    const r = await fetch(FBASE + path, {headers: FH});
+    if (!r.ok) return null;
+    const d = await r.json();
+    cache[path] = d;
+    return d;
+  } catch { return null; }
 }
 
-function getToday() {
-  const d = new Date();
-  return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
-}
-
-function formatDateDisplay(d) {
-  return d.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
-}
-
-function formatTime(ts) {
-  if (!ts) return '--:--';
-  return new Date(ts * 1000).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
-}
-
-function getFormColor(r) {
-  if (r === 'W') return '#00e676';
-  if (r === 'L') return '#f87171';
-  return 'rgba(240,237,230,0.25)';
-}
-
-function getFormClass(r) {
-  if (r === 'W') return 'fd-w';
-  if (r === 'L') return 'fd-l';
-  return 'fd-d';
-}
-
-function getFormLabel(r) {
-  if (r === 'W') return 'V';
-  if (r === 'L') return 'D';
-  return 'N';
-}
-
-function isLive(m) {
-  const s = m.status?.type;
-  return s === 'inprogress' || s === 'halftime';
-}
-
-function isFinished(m) {
-  return m.status?.type === 'finished';
-}
-
-function getLeagues(matches) {
-  const seen = new Set();
-  matches.forEach(m => {
-    const name = m.tournament?.uniqueTournament?.name || m.tournament?.name;
-    if (name) seen.add(name);
+async function callAI(prompt) {
+  const r = await fetch(AI_PROXY, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      messages: [{role: 'user', content: prompt}]
+    })
   });
-  return [...seen].slice(0, 8);
+  if (!r.ok) throw new Error('AI proxy error: ' + r.status);
+  const d = await r.json();
+  return d.content?.[0]?.text || '';
 }
 
-function renderMatchCard(m) {
-  const home = m.homeTeam;
-  const away = m.awayTeam;
-  const live = isLive(m);
-  const finished = isFinished(m);
+// ── UTILS ──────────────────────────────────────────────────
+const now = () => Math.floor(Date.now() / 1000);
+const fmtT = ts => ts ? new Date(ts*1000).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}) : '--:--';
+const fmtD = ts => ts ? new Date(ts*1000).toLocaleDateString('de-DE',{day:'numeric',month:'short'}) : '';
+const today = () => { const d=new Date(); return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`; };
+const fc = r => r==='W'?'#00e676':r==='L'?'#f08090':'rgba(240,237,230,0.25)';
+const fcl = r => r==='W'?'fw':r==='L'?'fl':'fd2';
+const fll = r => r==='W'?'S':r==='L'?'N':'U';
+const isLive = m => ['inprogress','halftime'].includes(m.status?.type);
+const isFin = m => m.status?.type === 'finished';
+const isUpcoming = m => !isLive(m) && !isFin(m);
+
+function crest(id, name, sz=36, rad=10) {
+  const s = (name||'').slice(0,3).toUpperCase();
+  return `<div style="width:${sz}px;height:${sz}px;border-radius:${rad}px;background:#1c1c1c;border:0.5px solid rgba(240,237,230,0.08);display:flex;align-items:center;justify-content:center;font-size:${Math.round(sz*0.3)}px;font-weight:800;overflow:hidden;flex-shrink:0">
+    <img src="${FBASE}/api/team/${id}/image/small" style="width:100%;height:100%;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" alt="${name}" loading="lazy"><span style="display:none">${s}</span></div>`;
+}
+
+function updateCounter() {
+  const left = Math.max(MAX_FREE - analysesUsed, 0);
+  const el = document.getElementById('counter');
+  if (left > 0) {
+    el.textContent = `${left} gratis Analyse${left===1?'':'n'}`;
+    el.style.color = left === 1 ? '#fbbf24' : '';
+    el.style.borderColor = left === 1 ? 'rgba(251,191,36,0.3)' : '';
+  } else {
+    el.textContent = '⚡ Pro werden';
+    el.style.background = 'rgba(0,230,118,0.15)';
+  }
+}
+
+// ── LOAD MATCHES ───────────────────────────────────────────
+async function loadMatches() {
+  const data = await fapi(`/api/matches/${today()}`);
+  let events = data?.events || [];
+
+  // Sort: live first, then upcoming, then finished
+  const live = events.filter(isLive);
+  const upcoming = events.filter(isUpcoming).sort((a,b) => (a.startTimestamp||0)-(b.startTimestamp||0));
+  const finished = events.filter(isFin).sort((a,b) => (b.startTimestamp||0)-(a.startTimestamp||0));
+
+  // Priority leagues for hero
+  const priority = ['Europa League','Champions League','Bundesliga','Premier League','DFB-Pokal','La Liga','Serie A','Ligue 1'];
+
+  // Hero = live match OR most important upcoming OR most recent finished
+  let heroPool = [...live, ...upcoming];
+  if (!heroPool.length) heroPool = finished;
+
+  // Sort hero pool by league priority
+  heroPool.sort((a,b) => {
+    const la = a.tournament?.uniqueTournament?.name || a.tournament?.name || '';
+    const lb = b.tournament?.uniqueTournament?.name || b.tournament?.name || '';
+    const ia = priority.findIndex(p => la.includes(p));
+    const ib = priority.findIndex(p => lb.includes(p));
+    return (ia===-1?99:ia) - (ib===-1?99:ib);
+  });
+
+  allMatches = [...live, ...upcoming, ...finished];
+  const hero = heroPool[0];
+  const rest = allMatches.filter(m => m.id !== hero?.id);
+
+  if (!hero) {
+    document.getElementById('heroWrap').innerHTML = '<div class="empty">Heute keine Spiele verfügbar.</div>';
+    return;
+  }
+
+  renderHero(hero);
+
+  // Build filters
+  const leagues = [...new Set(allMatches.map(m => m.tournament?.uniqueTournament?.name || m.tournament?.name).filter(Boolean))].slice(0,8);
+  const fc2 = document.getElementById('lfilter');
+  fc2.innerHTML = '<button class="lf active" onclick="filterLeague(this,\'all\')">Alle</button>';
+  leagues.forEach(l => fc2.innerHTML += `<button class="lf" onclick="filterLeague(this,'${encodeURIComponent(l)}')">${l}</button>`);
+
+  document.getElementById('listWrap').style.display = 'block';
+  document.getElementById('secCount').textContent = `${allMatches.length} Spiele`;
+
+  // Update SEO
+  const heroLeague = hero.tournament?.uniqueTournament?.name || hero.tournament?.name || '';
+  document.title = `${hero.homeTeam?.name} vs ${hero.awayTeam?.name} — ${heroLeague} · DreiPunkte`;
+
+  renderList(rest);
+}
+
+// ── HERO ───────────────────────────────────────────────────
+function renderHero(m) {
+  const home = m.homeTeam, away = m.awayTeam;
+  const live = isLive(m), fin = isFin(m);
   const league = m.tournament?.uniqueTournament?.name || m.tournament?.name || '';
-  const round = m.roundInfo?.name || m.roundInfo?.round ? `J${m.roundInfo?.round}` : '';
+  const hf = (m.homeTeamForm||'').split('').slice(0,5);
+  const af = (m.awayTeamForm||'').split('').slice(0,5);
+  const round = m.roundInfo?.name || (m.roundInfo?.round ? `${m.roundInfo.round}. Spieltag` : '');
+  const tid = m.tournament?.uniqueTournament?.id;
 
-  const homeFormHtml = (m.homeTeamForm || '').split('').slice(0,5).map(f =>
-    `<div class="mfd" style="background:${getFormColor(f)}"></div>`
-  ).join('');
-  const awayFormHtml = (m.awayTeamForm || '').split('').slice(0,5).reverse().map(f =>
-    `<div class="mfd" style="background:${getFormColor(f)}"></div>`
-  ).join('');
+  // Detect special match context
+  const isEurope = league.includes('League') || league.includes('Pokal') || league.includes('Cup');
+  const isGerman = ['Bundesliga','DFB','Freiburg','Bayern','Dortmund','Leipzig','Frankfurt','Leverkusen'].some(t => league.includes(t) || home?.name?.includes(t) || away?.name?.includes(t));
 
-  const scoreHtml = finished || live
-    ? `<div class="mc-score">${m.homeScore?.current ?? 0} – ${m.awayScore?.current ?? 0}</div>`
-    : `<div class="mc-vs">VS</div>`;
+  const pills = [];
+  if (isEurope) pills.push({txt:'🌍 Europacup', hot:true});
+  if (isGerman) pills.push({txt:'🇩🇪 Deutsches Team', hot:true});
+  if (live) pills.push({txt:'🔴 Läuft gerade', hot:true});
+  if (round) pills.push({txt:`📅 ${round}`, hot:false});
+  if (m.venue?.stadium?.capacity > 40000) pills.push({txt:`👥 ${Math.round(m.venue.stadium.capacity/1000)}k Fans`, hot:false});
 
-  const timeHtml = live
-    ? `<div class="mc-live-pill"><div class="mc-live-dot"></div><div class="mc-live-txt">${m.status?.description || 'LIVE'}</div></div>`
-    : `<div class="mc-time">${formatTime(m.startTimestamp)}</div>`;
+  document.getElementById('heroWrap').innerHTML = `
+    <div class="hero-wrap">
+      <div class="hero-label">
+        <div class="hero-label-dot"></div>
+        <span>${live ? 'Läuft jetzt' : fin ? 'Letztes Spiel' : 'Spiel des Abends'}</span>
+      </div>
+      <div class="hero-card" onclick="openAnalysis(${m.id})" role="article">
+        <div class="hero-bg"></div>
+        <div class="hero-glow-orb"></div>
+        <div class="hero-inner">
+          <div class="hero-top">
+            <div class="hero-comp">
+              <img style="width:18px;height:18px;object-fit:contain;opacity:.8" src="${FBASE}/api/tournament/${tid}/image" onerror="this.style.display='none'" alt="${league}" loading="lazy">
+              ${isEurope || round.includes('Finale') ? `<div class="hero-comp-badge">FINALE</div>` : ''}
+              <span class="hero-comp-name">${league}</span>
+            </div>
+            <div class="hero-kickoff">
+              ${live
+                ? `<div class="hero-live-badge"><div class="hld"></div><div class="hlt">${m.status?.description||'LIVE'}</div></div>`
+                : `<div class="hero-time-val">${fmtT(m.startTimestamp)}</div><div class="hero-time-sub">${fin?'Beendet':'Uhr heute'}</div>`}
+            </div>
+          </div>
 
-  return `
-    <div class="match-card" onclick="openAnalysis(${m.id})">
+          <div class="hero-teams-row">
+            <div class="hero-team-side">
+              <div class="hero-crest">${crest(home?.id, home?.name, 68, 18).replace('flex-shrink:0','').replace('display:flex','display:flex;margin:0 auto')}</div>
+              <div class="hero-tname">${home?.name||''}</div>
+              <div class="hero-form-dots">${hf.map(r=>`<div class="hfd" style="background:${fc(r)}"></div>`).join('')}</div>
+            </div>
+            <div class="hero-mid">
+              ${fin||live
+                ? `<div class="hero-score-val">${m.homeScore?.current??0} – ${m.awayScore?.current??0}</div>`
+                : `<div class="hero-vs-txt">VS</div>`}
+              <div class="hero-round-txt">${round}</div>
+            </div>
+            <div class="hero-team-side">
+              <div class="hero-crest">${crest(away?.id, away?.name, 68, 18).replace('flex-shrink:0','').replace('display:flex','display:flex;margin:0 auto')}</div>
+              <div class="hero-tname">${away?.name||''}</div>
+              <div class="hero-form-dots">${af.map(r=>`<div class="hfd" style="background:${fc(r)}"></div>`).join('')}</div>
+            </div>
+          </div>
+
+          ${pills.length ? `<div class="hero-pills">${pills.map(p=>`<div class="hpill ${p.hot?'hot':''}">${p.txt}</div>`).join('')}</div>` : ''}
+
+          <div class="hero-bottom-row">
+            <div class="hero-venue-txt">${m.venue?.stadium?.name||''}</div>
+            <div class="hero-analyse-btn"><span>KI-Analyse</span><span class="hero-cta-arrow">→</span></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── LIST ───────────────────────────────────────────────────
+function filterLeague(btn, league) {
+  document.querySelectorAll('.lf').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const dec = decodeURIComponent(league);
+  const heroId = allMatches[0]?.id;
+  const f = dec==='all' ? allMatches.filter(m=>m.id!==heroId) : allMatches.filter(m=>(m.tournament?.uniqueTournament?.name||m.tournament?.name)===dec&&m.id!==heroId);
+  renderList(f);
+}
+
+function renderList(matches) {
+  const el = document.getElementById('mlist');
+  if (!matches.length) { el.innerHTML='<div class="empty" style="padding:24px 0">Keine weiteren Spiele.</div>'; return; }
+  el.innerHTML = matches.map(m => {
+    const home=m.homeTeam,away=m.awayTeam;
+    const live=isLive(m),fin=isFin(m);
+    const hf=(m.homeTeamForm||'').split('').slice(0,5);
+    const af=(m.awayTeamForm||'').split('').slice(0,5);
+    const lg=m.tournament?.uniqueTournament?.name||m.tournament?.name||'';
+    return `<div class="mc" onclick="openAnalysis(${m.id})">
       <div class="mc-top">
-        <div class="mc-league">${league}${round ? ' · ' + round : ''}</div>
-        <div class="mc-time-block">${timeHtml}</div>
+        <div class="mc-lg">${lg}</div>
+        ${live?`<div class="mc-live"><div class="mc-ld"></div><div class="mc-lt">${m.status?.description||'LIVE'}</div></div>`
+             :fin?`<div class="mc-fin">Beendet</div>`
+             :`<div class="mc-t">${fmtT(m.startTimestamp)}</div>`}
       </div>
       <div class="mc-teams">
-        <div class="mc-team">
-          <div class="mc-crest" style="background:#1a1a1a;border:0.5px solid rgba(240,237,230,0.08)">
-            <img src="${BASE}/api/team/${home?.id}/image/small" onerror="this.style.display='none';this.parentNode.innerHTML='<span style=font-size:10px;font-weight:800>${(home?.shortName||home?.name||'').slice(0,3).toUpperCase()}</span>'" alt="${home?.name}">
-          </div>
-          <div class="mc-info">
-            <div class="mc-name">${home?.name || ''}</div>
-            <div class="mc-form">${homeFormHtml}</div>
-          </div>
-        </div>
-        <div class="mc-center">${scoreHtml}</div>
-        <div class="mc-team away">
-          <div class="mc-crest" style="background:#1a1a1a;border:0.5px solid rgba(240,237,230,0.08)">
-            <img src="${BASE}/api/team/${away?.id}/image/small" onerror="this.style.display='none';this.parentNode.innerHTML='<span style=font-size:10px;font-weight:800>${(away?.shortName||away?.name||'').slice(0,3).toUpperCase()}</span>'" alt="${away?.name}">
-          </div>
-          <div class="mc-info away">
-            <div class="mc-name">${away?.name || ''}</div>
-            <div class="mc-form away">${awayFormHtml}</div>
-          </div>
-        </div>
+        <div class="mc-team">${crest(home?.id,home?.name)}<div class="mc-ti"><div class="mc-tn">${home?.name||''}</div><div class="mc-tf">${hf.map(r=>`<div class="mfd" style="background:${fc(r)}"></div>`).join('')}</div></div></div>
+        <div class="mc-ctr">${fin||live?`<div class="mc-sc">${m.homeScore?.current??0}–${m.awayScore?.current??0}</div>`:`<div class="mc-vs">VS</div>`}</div>
+        <div class="mc-team r">${crest(home?.id,away?.name)}<div class="mc-ti r"><div class="mc-tn">${away?.name||''}</div><div class="mc-tf r">${af.map(r=>`<div class="mfd" style="background:${fc(r)}"></div>`).join('')}</div></div></div>
       </div>
-      <div class="mc-bottom">
-        <div style="font-size:11px;color:rgba(240,237,230,0.25)">${m.venue?.stadium?.name || ''}</div>
-        <div class="mc-cta">📊 Voir l'analyse IA</div>
+      <div class="mc-bot">
+        <div class="mc-vn">${m.venue?.stadium?.name||''}</div>
+        <div class="mc-cta">📊 Analyse →</div>
       </div>
-    </div>
-  `;
-}
-
-function renderMatches(matches) {
-  const list = document.getElementById('matchesList');
-  if (!matches.length) {
-    list.innerHTML = '<div class="empty">Aucun match trouvé pour aujourd\'hui.</div>';
-    return;
-  }
-  list.innerHTML = matches.map(renderMatchCard).join('');
-  document.getElementById('heroSub').textContent = `${matches.length} match${matches.length > 1 ? 's' : ''} · Analyse IA disponible`;
-}
-
-function buildLeagueFilters(matches) {
-  const leagues = getLeagues(matches);
-  const container = document.getElementById('leagueFilters');
-  container.innerHTML = '<button class="filter-btn active" data-league="all" onclick="filterLeague(this, \'all\')">Tous</button>';
-  leagues.forEach(l => {
-    container.innerHTML += `<button class="filter-btn" data-league="${l}" onclick="filterLeague(this, '${l}')">${l}</button>`;
-  });
-}
-
-function filterLeague(btn, league) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  activeLeague = league;
-  const filtered = league === 'all' ? allMatches : allMatches.filter(m =>
-    (m.tournament?.uniqueTournament?.name || m.tournament?.name) === league
-  );
-  renderMatches(filtered);
-}
-
-async function loadMatches() {
-  try {
-    const today = getToday();
-    const data = await fetchAPI(`/api/matches/${today}`);
-    const events = data?.events || [];
-    allMatches = events;
-
-    const d = new Date();
-    document.getElementById('navDate').textContent = formatDateDisplay(d);
-    document.getElementById('heroDay').textContent = 'soir';
-
-    buildLeagueFilters(events);
-    renderMatches(events);
-  } catch(e) {
-    document.getElementById('matchesList').innerHTML = '<div class="empty">Impossible de charger les matchs. Vérifiez votre connexion.</div>';
-    console.error(e);
-  }
-}
-
-async function openAnalysis(matchId) {
-  const m = allMatches.find(x => x.id === matchId);
-  if (!m) return;
-  currentMatch = m;
-
-  document.getElementById('matchesView').style.display = 'none';
-  document.getElementById('analysisView').style.display = 'block';
-  document.getElementById('aiLoading').style.display = 'flex';
-  document.getElementById('aiContent').style.display = 'none';
-  document.getElementById('analysisSections').style.display = 'none';
-
-  const home = m.homeTeam;
-  const away = m.awayTeam;
-  const league = m.tournament?.uniqueTournament?.name || m.tournament?.name || '';
-
-  document.getElementById('bannerTeams').innerHTML = `
-    <div class="banner-team">
-      <div class="banner-crest" style="background:#1a1a1a;border:0.5px solid rgba(240,237,230,0.1)">
-        <img src="${BASE}/api/team/${home?.id}/image/small" onerror="this.innerHTML='<span style=font-size:13px;font-weight:800>${(home?.shortName||'').slice(0,3)}</span>'" style="width:100%;height:100%;object-fit:contain">
-      </div>
-      <div class="banner-name">${home?.name || ''}</div>
-    </div>
-    <div class="banner-vs">VS</div>
-    <div class="banner-team">
-      <div class="banner-crest" style="background:#1a1a1a;border:0.5px solid rgba(240,237,230,0.1)">
-        <img src="${BASE}/api/team/${away?.id}/image/small" onerror="this.innerHTML='<span style=font-size:13px;font-weight:800>${(away?.shortName||'').slice(0,3)}</span>'" style="width:100%;height:100%;object-fit:contain">
-      </div>
-      <div class="banner-name">${away?.name || ''}</div>
-    </div>
-  `;
-
-  document.getElementById('bannerMeta').innerHTML = `
-    <div class="meta-pill">⏰ ${formatTime(m.startTimestamp)}</div>
-    <div class="meta-pill">🏆 ${league}</div>
-    ${m.venue?.stadium?.name ? `<div class="meta-pill">📍 ${m.venue.stadium.name}</div>` : ''}
-  `;
-
-  try {
-    const [formData, h2hData] = await Promise.all([
-      fetchAPI(`/api/match/${matchId}/form`).catch(() => null),
-      fetchAPI(`/api/match/${matchId}/h2h`).catch(() => null),
-    ]);
-
-    buildFormSection(formData, m);
-    buildH2HSection(h2hData);
-    buildStatsSection(formData, m);
-    buildInjurySection(m);
-
-    await generateAIAnalysis(m, formData, h2hData);
-
-  } catch(e) {
-    console.error(e);
-    document.getElementById('aiLoading').style.display = 'none';
-    document.getElementById('aiContent').style.display = 'block';
-    document.getElementById('aiText').innerHTML = '<span style="color:rgba(240,237,230,0.4)">Analyse non disponible pour ce match.</span>';
-    document.getElementById('analysisSections').style.display = 'flex';
-  }
-}
-
-function buildFormSection(formData, m) {
-  const homeForm = formData?.homeTeamForm?.map(f => f.result) || (m.homeTeamForm || '').split('');
-  const awayForm = formData?.awayTeamForm?.map(f => f.result) || (m.awayTeamForm || '').split('');
-  const homeName = m.homeTeam?.shortName || m.homeTeam?.name?.slice(0,3) || 'DOM';
-  const awayName = m.awayTeam?.shortName || m.awayTeam?.name?.slice(0,3) || 'EXT';
-
-  const homePts = homeForm.filter(r => r === 'W').length * 3 + homeForm.filter(r => r === 'D').length;
-  const awayPts = awayForm.filter(r => r === 'W').length * 3 + awayForm.filter(r => r === 'D').length;
-
-  document.getElementById('formBody').innerHTML = `
-    <div class="form-row">
-      <div class="form-tag">${homeName.slice(0,3)}</div>
-      <div class="form-dots">${homeForm.slice(0,5).map(r => `<div class="fd ${getFormClass(r)}">${getFormLabel(r)}</div>`).join('')}</div>
-      <div class="form-pts">${homePts}/15 pts</div>
-    </div>
-    <div class="form-row">
-      <div class="form-tag">${awayName.slice(0,3)}</div>
-      <div class="form-dots">${awayForm.slice(0,5).map(r => `<div class="fd ${getFormClass(r)}">${getFormLabel(r)}</div>`).join('')}</div>
-      <div class="form-pts">${awayPts}/15 pts</div>
-    </div>
-  `;
-}
-
-function buildH2HSection(h2hData) {
-  const matches = h2hData?.teamDuel?.previousEvents || h2hData?.events || [];
-  if (!matches.length) {
-    document.getElementById('h2hBody').innerHTML = '<div style="color:rgba(240,237,230,0.3);font-size:13px;padding:4px 0">Aucune donnée H2H disponible.</div>';
-    return;
-  }
-  document.getElementById('h2hBody').innerHTML = matches.slice(0,5).map(h => {
-    const date = new Date(h.startTimestamp * 1000).toLocaleDateString('fr-FR', {month:'short', year:'2-digit'});
-    const score = `${h.homeTeam?.shortName || h.homeTeam?.name?.slice(0,3)} ${h.homeScore?.current ?? '?'} – ${h.awayScore?.current ?? '?'} ${h.awayTeam?.shortName || h.awayTeam?.name?.slice(0,3)}`;
-    const comp = h.tournament?.name?.slice(0,3) || 'INT';
-    return `<div class="h2h-row"><span class="h2h-date">${date}</span><span class="h2h-score">${score}</span><span class="h2h-comp">${comp}</span></div>`;
+    </div>`;
   }).join('');
 }
 
-function buildStatsSection(formData, m) {
-  const hf = formData?.homeTeamForm || [];
-  const af = formData?.awayTeamForm || [];
-  const hGoals = hf.length ? (hf.reduce((s,f) => s + (f.homeScore || f.awayScore || 0), 0) / hf.length).toFixed(1) : '–';
-  const aGoals = af.length ? (af.reduce((s,f) => s + (f.homeScore || f.awayScore || 0), 0) / af.length).toFixed(1) : '–';
+// ── OPEN ANALYSIS ──────────────────────────────────────────
+async function openAnalysis(matchId) {
+  if (analysesUsed >= MAX_FREE) { openPaywall(); return; }
 
-  const stats = [
-    {label:'Buts / match (moy.)', vl: hGoals, vr: aGoals, fl: 52},
-    {label:'Victoires récentes', vl: hf.filter(f=>f.result==='W').length, vr: af.filter(f=>f.result==='W').length, fl: hf.filter(f=>f.result==='W').length > af.filter(f=>f.result==='W').length ? 60 : 40},
+  const m = allMatches.find(x=>x.id===matchId);
+  if (!m) return;
+  currentMatch = m;
+  analysesUsed++;
+  localStorage.setItem('dp_used', analysesUsed);
+  updateCounter();
+
+  showView('vAnalysis');
+  resetAnalysis();
+  cache = {};
+
+  const home=m.homeTeam, away=m.awayTeam;
+  const league=m.tournament?.uniqueTournament?.name||m.tournament?.name||'';
+  const tid=m.tournament?.uniqueTournament?.id;
+  const sid=m.season?.id;
+  const fin=isFin(m), live=isLive(m);
+
+  document.title = `${home?.name} vs ${away?.name} KI-Analyse — ${league} · DreiPunkte`;
+  document.getElementById('avMini').textContent = `${home?.shortName||home?.name?.slice(0,3)} vs ${away?.shortName||away?.name?.slice(0,3)}`;
+
+  document.getElementById('avTeams').innerHTML = `
+    <div class="avt">${crest(home?.id,home?.name,56,14)}<div class="avn">${home?.name||''}</div></div>
+    <div class="av-mid">${fin||live?`<div class="av-sc">${m.homeScore?.current??0} – ${m.awayScore?.current??0}</div>`:`<div class="av-vs">VS</div>`}</div>
+    <div class="avt">${crest(away?.id,away?.name,56,14)}<div class="avn">${away?.name||''}</div></div>`;
+
+  document.getElementById('avMeta').innerHTML = `
+    <div class="mp">⏰ ${fmtT(m.startTimestamp)}</div>
+    <div class="mp">🏆 ${league}</div>
+    ${m.roundInfo?.round?`<div class="mp">📅 ${m.roundInfo.round}. Spieltag`:''}
+    ${m.venue?.stadium?.name?`<div class="mp">📍 ${m.venue.stadium.name}</div>`:''}`;
+
+  document.getElementById('aiBdg').textContent = fin ? 'Nachspiel' : live ? 'Live-Analyse' : 'Vorspiel-Analyse';
+
+  // Load data in parallel
+  const [formData, h2hData] = await Promise.all([
+    fapi(`/api/match/${matchId}/form`),
+    fapi(`/api/match/${matchId}/h2h`),
+  ]);
+
+  buildForm(m, formData);
+  buildStats(m, formData);
+  buildH2H(h2hData, m);
+  if (tid && sid) buildTable(tid, sid, home?.id, away?.id);
+  else document.getElementById('cTable').innerHTML='<div class="empty">Nicht verfügbar.</div>';
+  buildPlayers(home?.id, away?.id, tid, sid);
+  buildLineup(matchId, fin);
+
+  generateAI(m, formData, h2hData, fin, live);
+}
+
+function resetAnalysis() {
+  document.getElementById('aiLd').style.display='flex';
+  document.getElementById('aiTxt').style.display='none';
+  document.getElementById('prono').style.display='none';
+  document.getElementById('kiCta').innerHTML='';
+  ['cForm','cStats','cH2H','cTable','cPlayers','cLineup'].forEach(id=>{
+    document.getElementById(id).innerHTML='<div class="loader"><div class="spin"></div></div>';
+  });
+  switchTab(document.querySelector('.dtab'),'tKI');
+}
+
+// ── FORM ───────────────────────────────────────────────────
+function buildForm(m, fd) {
+  const hf=fd?.homeTeamForm?.map(f=>f.result)||(m.homeTeamForm||'').split('');
+  const af=fd?.awayTeamForm?.map(f=>f.result)||(m.awayTeamForm||'').split('');
+  const hp=hf.filter(r=>r==='W').length*3+hf.filter(r=>r==='D').length;
+  const ap=af.filter(r=>r==='W').length*3+af.filter(r=>r==='D').length;
+  const hev=fd?.homeTeamForm||[], aev=fd?.awayTeamForm||[];
+
+  let html=`<div class="card"><div class="ch" onclick="tog(this)"><div class="chl">🔥 Aktuelle Form</div><div class="chev open">⌄</div></div>
+    <div class="cb open">
+      <div class="fr"><div class="ft">${(m.homeTeam?.shortName||m.homeTeam?.name||'').slice(0,3).toUpperCase()}</div><div class="fds">${hf.slice(0,5).map(r=>`<div class="fd ${fcl(r)}">${fll(r)}</div>`).join('')}</div><div class="fps">${hp}/15</div></div>
+      <div class="fr"><div class="ft">${(m.awayTeam?.shortName||m.awayTeam?.name||'').slice(0,3).toUpperCase()}</div><div class="fds">${af.slice(0,5).map(r=>`<div class="fd ${fcl(r)}">${fll(r)}</div>`).join('')}</div><div class="fps">${ap}/15</div></div>
+    </div></div>`;
+
+  [['cForm', hev, m.homeTeam], ['cForm', aev, m.awayTeam]].forEach(([_, evs, team], i) => {
+    if (!evs.length) return;
+    html+=`<div class="card"><div class="ch" onclick="tog(this)"><div class="chl">📅 ${team?.shortName||team?.name} — Letzte Spiele</div><div class="chev">⌄</div></div>
+      <div class="cb">${evs.slice(0,6).map(f=>`
+        <div class="rm">
+          <div class="rm-d">${fmtD(f.event?.startTimestamp)}</div>
+          <div class="rm-t">${f.event?.homeTeam?.shortName||f.event?.homeTeam?.name?.slice(0,3)||'?'} ${f.event?.homeScore?.current??'?'}–${f.event?.awayScore?.current??'?'} ${f.event?.awayTeam?.shortName||f.event?.awayTeam?.name?.slice(0,3)||'?'}</div>
+          <div class="rm-r ${fcl(f.result)}">${fll(f.result)}</div>
+        </div>`).join('')}
+      </div></div>`;
+  });
+
+  document.getElementById('cForm').innerHTML=html;
+}
+
+// ── STATS ──────────────────────────────────────────────────
+function buildStats(m, fd) {
+  const hf=fd?.homeTeamForm||[], af=fd?.awayTeamForm||[];
+  const hw=hf.filter(f=>f.result==='W').length, aw=af.filter(f=>f.result==='W').length;
+  const hl=hf.filter(f=>f.result==='L').length, al=af.filter(f=>f.result==='L').length;
+
+  function gf(evs, tid) {
+    return evs.reduce((s,f)=>{
+      const ih=f.event?.homeTeam?.id===tid;
+      return s+(ih?f.event?.homeScore?.current||0:f.event?.awayScore?.current||0);
+    },0);
+  }
+
+  const hg=hf.length?(gf(hf,m.homeTeam?.id)/hf.length).toFixed(1):'–';
+  const ag=af.length?(gf(af,m.awayTeam?.id)/af.length).toFixed(1):'–';
+
+  const stats=[
+    {l:'Siege (letzte 5)',vl:hw,vr:aw,fl:hw>aw?65:hw<aw?35:50},
+    {l:'Niederlagen (letzte 5)',vl:hl,vr:al,fl:hl<al?65:hl>al?35:50},
+    {l:'Tore Ø (letzte 5)',vl:hg,vr:ag,fl:parseFloat(hg)>parseFloat(ag)?62:42},
   ];
 
-  document.getElementById('statsBody').innerHTML = stats.map(s => `
-    <div class="stat-row">
-      <div class="stat-vals">
-        <span class="sv" style="color:var(--red)">${s.vl}</span>
-        <span class="sn">${s.label}</span>
-        <span class="sv" style="color:var(--yellow)">${s.vr}</span>
+  document.getElementById('cStats').innerHTML=`<div class="card"><div class="ch" onclick="tog(this)"><div class="chl">📊 Formvergleich</div><div class="chev open">⌄</div></div>
+    <div class="cb open">
+      ${stats.map(s=>`<div class="sr"><div class="sv"><span class="svl" style="color:var(--red)">${s.vl}</span><span class="svn">${s.l}</span><span class="svl" style="color:var(--yellow)">${s.vr}</span></div><div class="trk"><div class="tl" style="width:${s.fl}%"></div><div class="tr"></div></div></div>`).join('')}
+      <div style="margin-top:10px;padding-top:8px;border-top:0.5px solid rgba(240,237,230,0.05);display:flex;justify-content:space-between;font-size:10px;font-family:'DM Mono',monospace">
+        <span style="color:var(--red)">■ ${m.homeTeam?.shortName||m.homeTeam?.name}</span>
+        <span style="color:var(--yellow)">■ ${m.awayTeam?.shortName||m.awayTeam?.name}</span>
       </div>
-      <div class="track"><div class="tl" style="width:${s.fl}%"></div><div class="tr"></div></div>
-    </div>
-  `).join('');
+    </div></div>`;
 }
 
-function buildInjurySection(m) {
-  document.getElementById('injuryBody').innerHTML = `
-    <div style="color:rgba(240,237,230,0.3);font-size:12px;line-height:1.6">
-      Les données d'absences sont disponibles via l'API premium.<br>
-      <span style="color:rgba(0,230,118,0.6)">Passez en Pro pour accéder aux listes de blessés en temps réel.</span>
-    </div>
-  `;
+// ── H2H ────────────────────────────────────────────────────
+function buildH2H(h2hData, m) {
+  const evs=h2hData?.teamDuel?.previousEvents||[];
+  if (!evs.length) { document.getElementById('cH2H').innerHTML='<div class="empty">Keine H2H-Daten.</div>'; return; }
+
+  const hid=m.homeTeam?.id;
+  const hw=evs.filter(e=>{const ih=e.homeTeam?.id===hid;const hs=e.homeScore?.current||0,as2=e.awayScore?.current||0;return ih?hs>as2:as2>hs;}).length;
+  const draws=evs.filter(e=>(e.homeScore?.current||0)===(e.awayScore?.current||0)).length;
+  const aw=evs.length-hw-draws;
+  const tg=evs.reduce((s,e)=>s+(e.homeScore?.current||0)+(e.awayScore?.current||0),0);
+  const avg=evs.length?(tg/evs.length).toFixed(1):'–';
+
+  document.getElementById('cH2H').innerHTML=`<div class="card"><div class="ch" onclick="tog(this)"><div class="chl">⚔️ Direktvergleich (${evs.length})</div><div class="chev open">⌄</div></div>
+    <div class="cb open">
+      <div class="h2h-sum">
+        <div class="h2h-c"><div class="h2h-n" style="color:var(--red)">${hw}</div><div class="h2h-l">SIEGE ${(m.homeTeam?.shortName||'').toUpperCase()}</div></div>
+        <div class="h2h-c"><div class="h2h-n" style="color:var(--m)">${draws}</div><div class="h2h-l">UNENTSCH.</div></div>
+        <div class="h2h-c"><div class="h2h-n" style="color:var(--yellow)">${aw}</div><div class="h2h-l">SIEGE ${(m.awayTeam?.shortName||'').toUpperCase()}</div></div>
+      </div>
+      <div class="ibox"><div class="ibox-t">Ø ${avg} Tore pro Spiel</div><div class="ibox-b">${hw>aw?`${m.homeTeam?.name} dominiert den Direktvergleich.`:aw>hw?`${m.awayTeam?.name} hat die Oberhand.`:'Ausgeglichene Bilanz.'}</div></div>
+      ${evs.slice(0,8).map(e=>`<div class="h2h-r"><span class="hd">${fmtD(e.startTimestamp)}</span><span class="hs">${e.homeTeam?.shortName||e.homeTeam?.name?.slice(0,3)||'?'} ${e.homeScore?.current??'?'}–${e.awayScore?.current??'?'} ${e.awayTeam?.shortName||e.awayTeam?.name?.slice(0,3)||'?'}</span><span class="hc">${(e.tournament?.name||'').slice(0,2)}</span></div>`).join('')}
+    </div></div>`;
 }
 
-async function generateAIAnalysis(m, formData, h2hData) {
-  const home = m.homeTeam?.name || 'Équipe domicile';
-  const away = m.awayTeam?.name || 'Équipe extérieur';
-  const league = m.tournament?.uniqueTournament?.name || m.tournament?.name || 'Ligue inconnue';
+// ── TABLE ──────────────────────────────────────────────────
+async function buildTable(tid, sid, hid, aid) {
+  const d=await fapi(`/api/tournament/${tid}/season/${sid}/standings/total`);
+  const rows=d?.standings?.[0]?.rows||d?.standings?.rows||[];
+  if (!rows.length) { document.getElementById('cTable').innerHTML='<div class="empty">Tabelle nicht verfügbar.</div>'; return; }
 
-  const homeForm = (m.homeTeamForm || '').split('').slice(0,5).join('');
-  const awayForm = (m.awayTeamForm || '').split('').slice(0,5).join('');
+  document.getElementById('cTable').innerHTML=`<div class="card"><div class="ch" onclick="tog(this)"><div class="chl">🏆 Aktuelle Tabelle</div><div class="chev open">⌄</div></div>
+    <div class="cb open">
+      <div class="st-h"><span>#</span><span>Team</span><span>S</span><span>N</span><span>Td</span><span>Pkt</span></div>
+      ${rows.map(r=>`<div class="st-r ${r.team?.id===hid||r.team?.id===aid?'hl':''}">
+        <div class="st-p">${r.position}</div>
+        <div class="st-tm"><div class="st-cr"><img src="${FBASE}/api/team/${r.team?.id}/image/small" onerror="this.style.display='none';this.parentNode.innerText='${(r.team?.shortName||r.team?.name||'').slice(0,2)}'" alt="" style="width:100%;height:100%;object-fit:contain" loading="lazy"></div><div class="st-nm">${r.team?.shortName||r.team?.name||''}</div></div>
+        <div class="st-v">${r.wins??0}</div><div class="st-v">${r.losses??0}</div>
+        <div class="st-v" style="font-size:10px">${r.scoresFor??0}:${r.scoresAgainst??0}</div>
+        <div class="st-pt">${r.points??0}</div>
+      </div>`).join('')}
+    </div></div>`;
+}
 
-  const h2hMatches = h2hData?.teamDuel?.previousEvents || [];
-  const h2hText = h2hMatches.slice(0,3).map(h =>
-    `${h.homeTeam?.name} ${h.homeScore?.current}-${h.awayScore?.current} ${h.awayTeam?.name}`
-  ).join(', ');
+// ── PLAYERS ────────────────────────────────────────────────
+async function buildPlayers(hid, aid, tid, sid) {
+  const [hp, ap, bp]=await Promise.all([
+    fapi(`/api/team/${hid}/players`),
+    fapi(`/api/team/${aid}/players`),
+    tid&&sid?fapi(`/api/tournament/${tid}/season/${sid}/best-players`):null,
+  ]);
 
-  const prompt = `Tu es un analyste football expert. Analyse ce match en français de façon concise et percutante (150 mots max) :
+  let html='';
+  const best=bp?.topPlayers?.rating||bp?.bestPlayers||[];
 
-Match : ${home} vs ${away}
-Compétition : ${league}
-Forme ${home} : ${homeForm || 'inconnue'}
-Forme ${away} : ${awayForm || 'inconnue'}
-H2H récent : ${h2hText || 'données non disponibles'}
+  if (best.length) {
+    html+=`<div class="card"><div class="ch" onclick="tog(this)"><div class="chl">⭐ Topspieler der Liga</div><div class="chev open">⌄</div></div>
+      <div class="cb open"><div class="pg">${best.slice(0,6).map(p=>{
+        const pl=p.player||p;
+        return `<div class="pcard"><div class="pc-h"><div class="pc-av"><img src="${FBASE}/api/player/${pl.id}/image" onerror="this.style.display='none';this.parentNode.innerText='${(pl.name||'').split(' ').map(n=>n[0]).join('').slice(0,2)}'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:9px" loading="lazy"></div><div><div class="pc-nm">${pl.name||'–'}</div><div class="pc-ps">${p.teamName||pl.position||''}</div></div></div>
+        <div class="pc-stats">${p.statistics?.rating?`<div class="pc-st"><div class="pc-vl">${parseFloat(p.statistics.rating).toFixed(1)}</div><div class="pc-lb">RATING</div></div>`:''}${p.statistics?.goals?`<div class="pc-st"><div class="pc-vl">${p.statistics.goals}</div><div class="pc-lb">TORE</div></div>`:''}${p.statistics?.assists?`<div class="pc-st"><div class="pc-vl">${p.statistics.assists}</div><div class="pc-lb">VORLAGEN</div></div>`:''}</div></div>`;
+      }).join('')}</div></div></div>`;
+  }
 
-Donne :
-1. Une analyse tactique clé (2-3 phrases)
-2. Le facteur décisif du match
-3. Ta lecture finale (sans donner de score exact)
+  [hp,ap].forEach((team,i)=>{
+    const players=team?.players||[];
+    const tname=i===0?currentMatch?.homeTeam?.name:currentMatch?.awayTeam?.name;
+    if (!players.length) return;
+    html+=`<div class="card"><div class="ch" onclick="tog(this)"><div class="chl">👥 Kader — ${tname}</div><div class="chev">⌄</div></div>
+      <div class="cb">${['G','D','M','F'].map(pos=>{
+        const pp=players.filter(p=>p.player?.position===pos);
+        if (!pp.length) return '';
+        return `<div style="font-size:10px;font-weight:700;color:var(--m);margin:8px 0 4px;letter-spacing:.5px">${{'G':'Torhüter','D':'Abwehr','M':'Mittelfeld','F':'Angriff'}[pos]}</div>
+          ${pp.map(p=>`<div class="lp"><div class="lp-n">${p.jerseyNumber||'–'}</div><div class="lp-nm">${p.player?.name||'–'}</div><div class="lp-p">${p.player?.nationality||''}</div></div>`).join('')}`;
+      }).join('')}</div></div>`;
+  });
 
-Utilise des balises <strong> pour les éléments importants et <span class="hl"> pour les statistiques clés. Sois direct et factuel.`;
+  if (!html) html='<div class="empty">Keine Spielerdaten verfügbar.</div>';
+  document.getElementById('cPlayers').innerHTML=html;
+}
+
+// ── LINEUP ─────────────────────────────────────────────────
+async function buildLineup(matchId, isFinished) {
+  const d=await fapi(`/api/match/${matchId}/lineups`);
+  if (!d?.homeTeam&&!d?.awayTeam) {
+    document.getElementById('cLineup').innerHTML=`<div class="card"><div class="cb open" style="padding:20px 15px;text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">${isFinished?'📋':'⏳'}</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:6px">${isFinished?'Aufstellung nicht verfügbar':'Noch nicht bekannt'}</div>
+      <div style="font-size:12px;color:var(--m);line-height:1.6">${isFinished?'Für dieses Spiel sind keine Aufstellungsdaten gespeichert.':'Offizielle Aufstellungen werden ca. 1 Stunde vor Anpfiff veröffentlicht.'}</div>
+    </div></div>`;
+    return;
+  }
+
+  const rt=(team,name)=>{
+    const st=team?.players?.filter(p=>!p.substitute)||[];
+    const sb=team?.players?.filter(p=>p.substitute)||[];
+    return `<div>
+      <div class="lt-title">${name}</div>
+      ${team?.formation?`<div style="font-size:11px;color:var(--m);margin-bottom:8px;font-family:'DM Mono',monospace">Formation: <strong style="color:var(--w)">${team.formation}</strong></div>`:''}
+      ${st.map(p=>`<div class="lp"><div class="lp-n">${p.jerseyNumber||'–'}</div><div class="lp-nm">${p.player?.name||'–'}</div><div class="lp-p">${p.position||''}</div></div>`).join('')}
+      ${sb.length?`<div style="font-size:10px;font-weight:700;color:var(--m);margin:8px 0 4px;letter-spacing:.5px">AUSWECHSELSPIELER</div>${sb.map(p=>`<div class="lp" style="opacity:0.55"><div class="lp-n">${p.jerseyNumber||'–'}</div><div class="lp-nm">${p.player?.name||'–'}</div><div class="lp-p">${p.position||''}</div></div>`).join('')}`:''}
+    </div>`;
+  };
+
+  document.getElementById('cLineup').innerHTML=`<div class="card"><div class="ch" onclick="tog(this)"><div class="chl">📋 Aufstellungen</div><div class="chev open">⌄</div></div>
+    <div class="cb open"><div class="lg">${rt(d.homeTeam,currentMatch?.homeTeam?.shortName||'Heim')}${rt(d.awayTeam,currentMatch?.awayTeam?.shortName||'Auswärts')}</div></div></div>`;
+}
+
+// ── AI ─────────────────────────────────────────────────────
+async function generateAI(m, fd, h2hData, fin, live) {
+  const home=m.homeTeam?.name||'', away=m.awayTeam?.name||'';
+  const league=m.tournament?.uniqueTournament?.name||m.tournament?.name||'';
+  const hf=fd?.homeTeamForm?.map(f=>f.result).join('')||m.homeTeamForm||'';
+  const af=fd?.awayTeamForm?.map(f=>f.result).join('')||m.awayTeamForm||'';
+  const h2h=h2hData?.teamDuel?.previousEvents||[];
+
+  const homeDetails=fd?.homeTeamForm?.slice(0,5).map(f=>{
+    const ih=f.event?.homeTeam?.id===m.homeTeam?.id;
+    const opp=ih?f.event?.awayTeam?.name:f.event?.homeTeam?.name;
+    const gf2=ih?f.event?.homeScore?.current||0:f.event?.awayScore?.current||0;
+    const ga=ih?f.event?.awayScore?.current||0:f.event?.homeScore?.current||0;
+    return `${f.result==='W'?'Sieg':f.result==='L'?'Niederlage':'Unentschieden'} vs ${opp} (${gf2}:${ga})`;
+  }).join(', ')||'keine Details';
+
+  const awayDetails=fd?.awayTeamForm?.slice(0,5).map(f=>{
+    const ia=f.event?.awayTeam?.id===m.awayTeam?.id;
+    const opp=ia?f.event?.homeTeam?.name:f.event?.awayTeam?.name;
+    const gf2=ia?f.event?.awayScore?.current||0:f.event?.homeScore?.current||0;
+    const ga=ia?f.event?.homeScore?.current||0:f.event?.awayScore?.current||0;
+    return `${f.result==='W'?'Sieg':f.result==='L'?'Niederlage':'Unentschieden'} vs ${opp} (${gf2}:${ga})`;
+  }).join(', ')||'keine Details';
+
+  const h2hTxt=h2h.slice(0,5).map(e=>`${e.homeTeam?.name} ${e.homeScore?.current}-${e.awayScore?.current} ${e.awayTeam?.name}`).join(' | ')||'keine Daten';
+
+  const matchType = fin ? 'NACHSPIEL-ANALYSE' : live ? 'LIVE-ANALYSE' : 'VORSPIEL-ANALYSE';
+  const scoreInfo = (fin||live) ? `Aktueller Stand: ${m.homeScore?.current??0}:${m.awayScore?.current??0}` : '';
+
+  const prompt = `Du bist Deutschlands führender Fußball-Experte und Datenanalyst. Verfasse eine präzise, faktenbasierte ${matchType} auf Deutsch.
+
+SPIEL: ${home} vs ${away}
+WETTBEWERB: ${league}
+DATUM/UHRZEIT: ${new Date((m.startTimestamp||0)*1000).toLocaleString('de-DE',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})}
+${scoreInfo}
+STADION: ${m.venue?.stadium?.name||'unbekannt'}
+
+FORM-DATEN:
+• ${home} (letzte 5, S/U/N): ${hf||'unbekannt'}
+  Ergebnisse: ${homeDetails}
+• ${away} (letzte 5): ${af||'unbekannt'}  
+  Ergebnisse: ${awayDetails}
+
+DIREKTVERGLEICH: ${h2hTxt}
+
+Schreibe die Analyse in diesem HTML-Format:
+
+<strong>Kontext & Bedeutung</strong><br>
+[Was steht auf dem Spiel? Tabellenposition, Saisonphase, europäische Relevanz]
+
+<strong>Formanalyse</strong><br>
+[Konkrete Auswertung der letzten Spiele — Zahlen, Trends, Schwachstellen]
+
+<strong>Entscheidender Faktor</strong><br>
+[<span class="hl">Den einen wichtigsten Aspekt hervorheben</span> — taktisch, personell oder mental]
+
+<strong>Direktvergleich & Tendenz</strong><br>
+[H2H-Bilanz auswerten, historische Muster]
+
+<strong>Analytische Einschätzung</strong><br>
+[Klare Tendenz ohne genaues Ergebnis — wer hat strukturelle Vorteile?]
+
+Max. 230 Wörter. Schreibe für ein sachkundiges deutsches Publikum. Präzise, direkt, ohne Floskeln.`;
 
   try {
-    const res = await fetch(CLAUDE_API, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 400,
-        messages: [{role: 'user', content: prompt}]
-      })
-    });
+    const text = await callAI(prompt);
+    document.getElementById('aiLd').style.display='none';
+    document.getElementById('aiTxt').style.display='block';
+    document.getElementById('aiTxt').innerHTML=text;
 
-    const data = await res.json();
-    const text = data.content?.[0]?.text || '';
+    // Prono calculation
+    const hw=(hf.match(/W/g)||[]).length, aw2=(af.match(/W/g)||[]).length;
+    const h2hHW=h2h.filter(e=>{const ih=e.homeTeam?.id===m.homeTeam?.id;const hs=e.homeScore?.current||0,as2=e.awayScore?.current||0;return ih?hs>as2:as2>hs;}).length;
+    const h2hAW=h2h.filter(e=>{const ia=e.awayTeam?.id===m.awayTeam?.id;const hs=e.homeScore?.current||0,as2=e.awayScore?.current||0;return ia?as2>hs:hs>as2;}).length;
+    const total=Math.max(hw+aw2,2);
+    const h2hB=h2h.length?(h2hHW-h2hAW)/h2h.length*8:0;
+    const ph=Math.min(Math.max(Math.round(hw/total*55+20+h2hB),18),68);
+    const pa=Math.min(Math.max(Math.round(aw2/total*55+15-h2hB),12),62);
+    const pd=Math.max(100-ph-pa,10);
+    const mx=Math.max(ph,pd,pa);
 
-    document.getElementById('aiLoading').style.display = 'none';
-    document.getElementById('aiContent').style.display = 'block';
-    document.getElementById('aiText').innerHTML = text;
-
-    const homeWins = h2hMatches.filter(h => h.homeTeam?.id === m.homeTeam?.id && h.homeScore?.current > h.awayScore?.current ||
-      h.awayTeam?.id === m.homeTeam?.id && h.awayScore?.current > h.homeScore?.current).length;
-    const awayWins = h2hMatches.length - homeWins;
-    const total = Math.max(h2hMatches.length, 1);
-    const homePct = Math.round((homeWins / total) * 60 + 20);
-    const awayPct = Math.round((awayWins / total) * 60 + 10);
-    const drawPct = 100 - homePct - awayPct;
-
-    document.getElementById('pronoGrid').innerHTML = `
-      <div class="prono-card ${homePct > awayPct ? 'winner' : ''}">
-        <div class="prono-lbl">VICTOIRE</div>
-        <div class="prono-pct" style="color:${homePct > 40 ? 'var(--green)' : 'var(--white)'}">${homePct}%</div>
-        <div class="prono-name">${home.split(' ').slice(-1)[0]}</div>
+    const pg=document.getElementById('prono');
+    pg.style.display='grid';
+    pg.innerHTML=`
+      <div class="pc ${ph===mx?'w':''}">
+        <div class="pl">SIEG</div>
+        <div class="pp" style="color:${ph>=45?'var(--g)':ph>=35?'var(--w)':'var(--m)'}">${ph}%</div>
+        <div class="pn">${(home.split(' ').slice(-1)[0]||home).slice(0,10)}</div>
       </div>
-      <div class="prono-card">
-        <div class="prono-lbl">NUL</div>
-        <div class="prono-pct" style="color:rgba(240,237,230,0.5)">${Math.max(drawPct, 10)}%</div>
-        <div class="prono-name">Match nul</div>
+      <div class="pc">
+        <div class="pl">UNENTSCHIEDEN</div>
+        <div class="pp" style="color:rgba(240,237,230,0.5)">${pd}%</div>
+        <div class="pn">Remis</div>
       </div>
-      <div class="prono-card ${awayPct > homePct ? 'winner' : ''}">
-        <div class="prono-lbl">VICTOIRE</div>
-        <div class="prono-pct" style="color:${awayPct > 40 ? 'var(--green)' : 'var(--white)'}">${awayPct}%</div>
-        <div class="prono-name">${away.split(' ').slice(-1)[0]}</div>
-      </div>
-    `;
+      <div class="pc ${pa===mx?'w':''}">
+        <div class="pl">SIEG</div>
+        <div class="pp" style="color:${pa>=45?'var(--g)':pa>=35?'var(--w)':'var(--m)'}">${pa}%</div>
+        <div class="pn">${(away.split(' ').slice(-1)[0]||away).slice(0,10)}</div>
+      </div>`;
 
-    document.getElementById('analysisSections').style.display = 'flex';
+    if (analysesUsed >= MAX_FREE) {
+      document.getElementById('kiCta').innerHTML=`
+        <div style="background:linear-gradient(135deg,#071209,rgba(7,18,9,0.5));border:0.5px solid var(--gb);border-radius:18px;padding:22px 18px;text-align:center;position:relative;overflow:hidden;margin-top:4px">
+          <div style="position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:150px;height:150px;background:var(--g);opacity:0.04;border-radius:50%;pointer-events:none"></div>
+          <div style="font-size:28px;margin-bottom:10px">⚡</div>
+          <div style="font-size:19px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px;line-height:1.2">Das war deine letzte<br><span style="color:var(--g)">kostenlose</span> Analyse</div>
+          <div style="font-size:13px;color:var(--m);line-height:1.7;margin-bottom:18px">Verpasse keine Analyse mehr. Mit DreiPunkte Pro analysierst du jedes Bundesliga- und Champions-League-Spiel unbegrenzt.</div>
+          <button onclick="openPaywall()" style="display:block;width:100%;background:var(--g);color:#051a0b;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;padding:17px;border-radius:14px;border:none;cursor:pointer;margin-bottom:10px;letter-spacing:-0.3px">Jetzt Pro werden — 9,99€/Monat</button>
+          <div style="font-size:12px;color:rgba(240,237,230,0.25);cursor:pointer" onclick="goHome()">Zurück zu den Spielen</div>
+        </div>`;
+    }
 
   } catch(e) {
-    document.getElementById('aiLoading').style.display = 'none';
-    document.getElementById('aiContent').style.display = 'block';
-    document.getElementById('aiText').innerHTML = `<strong>${home} vs ${away}</strong><br><br>Analyse indisponible — vérifiez votre connexion ou réessayez.`;
-    document.getElementById('analysisSections').style.display = 'flex';
-    console.error(e);
+    document.getElementById('aiLd').style.display='none';
+    document.getElementById('aiTxt').style.display='block';
+    document.getElementById('aiTxt').innerHTML=`<strong>${home} vs ${away}</strong><br><br><span style="color:var(--m)">KI-Analyse konnte nicht geladen werden. Stelle sicher, dass die App korrekt deployed ist und versuche es erneut.</span>`;
+    console.error('AI Error:', e);
   }
 }
 
-function showMatches() {
-  document.getElementById('analysisView').style.display = 'none';
-  document.getElementById('matchesView').style.display = 'block';
+// ── PAYWALL ────────────────────────────────────────────────
+function openPaywall() {
+  if (document.getElementById('pwOverlay')) return;
+  const el=document.createElement('div');
+  el.id='pwOverlay';
+  el.className='pw-overlay';
+  el.innerHTML=`<div class="pw-sheet">
+    <div class="pw-orb"></div>
+    <div class="pw-handle"></div>
+    <div class="pw-icon">⚡</div>
+    <div class="pw-title">Werde <span style="color:var(--g)">Pro</span> und analysiere jedes Spiel</div>
+    <div class="pw-sub">Unbegrenzte KI-Analysen für alle Bundesliga, Champions League und Europa League Spiele.</div>
+    <div class="pw-features">
+      ${['✅ Unbegrenzte KI-Spielanalysen','✅ Echtzeit-Aufstellungen & Taktik','✅ Vollständige Statistiken & xG-Daten','✅ Alle europäischen Top-Ligen','✅ Keine Werbung — jemals'].map(f=>`<div class="pw-feat">${f}</div>`).join('')}
+    </div>
+    <button class="pw-cta" onclick="document.getElementById('pwOverlay').remove()">Jetzt starten — 9,99€ / Monat</button>
+    <div class="pw-skip" onclick="document.getElementById('pwOverlay').remove()">Vielleicht später</div>
+  </div>`;
+  el.addEventListener('click', e=>{if(e.target===el)el.remove();});
+  document.body.appendChild(el);
 }
 
-function toggleSec(head) {
-  const body = head.nextElementSibling;
-  const chev = head.querySelector('.sec-chevron');
-  body.classList.toggle('open');
-  chev.classList.toggle('open');
+// ── SHARE ──────────────────────────────────────────────────
+async function shareMatch() {
+  if (!currentMatch) return;
+  const txt=`${currentMatch.homeTeam?.name} vs ${currentMatch.awayTeam?.name} — KI-Analyse auf DreiPunkte 🧠\nhttps://dreipunkte.app`;
+  try { await navigator.share({title:'DreiPunkte Analyse',text:txt,url:'https://dreipunkte.app'}); }
+  catch { navigator.clipboard?.writeText(txt); }
 }
 
+// ── NAV ────────────────────────────────────────────────────
+function goHome() { showView('vHome'); document.title='DreiPunkte — Bundesliga KI Analyse & Spielvorschau heute'; window.scrollTo(0,0); }
+function showView(id) { document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+function switchTab(btn, pid) { document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.dpanel').forEach(p=>p.classList.remove('active')); if(btn)btn.classList.add('active'); document.getElementById(pid)?.classList.add('active'); }
+function tog(h) { const b=h.nextElementSibling,c=h.querySelector('.chev'); b.classList.toggle('open'); if(c)c.classList.toggle('open'); }
+
+// ── INIT ───────────────────────────────────────────────────
+updateCounter();
 loadMatches();
 </script>
 </body>
